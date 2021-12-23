@@ -1,0 +1,56 @@
+---
+title: "Ejemplo de miniviñeta"
+author: "Borja Calvo"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Ejemplo de miniviñeta}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+Este es un mini ejemplo de como crear una viñeta para el paquete *permupack*. Veremos como obtener, a partir de una matriz de resultado (de una competición, por ejemplo) una lista de permutaciones que representen los rankings y, posteriormente, como estimar de esas permutaciones las marginales de primer orden. Para concluir, visualizaremos esas marginales en un gráfico.
+
+Lo primero, crearemos una matriz de resultados aleatorios, muestreando varias distribuciones Beta, cada una representando a un jugador o judagora.
+
+```{r}
+num.permus <- 100
+scores <- cbind(rbeta(num.permus, 1, 1),
+                rbeta(num.permus, 5, 1),
+                rbeta(num.permus, 2, 6),
+                rbeta(num.permus, 10, 10),
+                rbeta(num.permus, 1, 3))
+head(scores)
+```
+
+Una vez tenemos las puntuaciones, cargamos la librería y creamos la lista de permutaciones.
+
+```{r}
+library(permupack)
+permu.list <- getPermutationFromScores(scores=scores, 
+                                       type="ranking", decreasing=FALSE)
+
+```
+
+A partir de la lista, podemos obtener la matriz de marginales de primer orden y podemos visualizarla en un gráfico. Para esto, es estrictamente necesario tener instalados los paquetes **ggplot2** y **reshape2**.
+
+```{r, fig.width=10, fig.height=6, out.width="100%"}
+margs <- getFirstOrderMarginals(permu.list, smoothed=TRUE)
+margs
+plot <- plotFirstOrderMarginals(permu.list, smoothed=TRUE)
+plot
+```
+
+El plot generado es un objeto de ggplot, por lo que podemos modificarlo.
+
+```{r, fig.width=10, fig.height=6, out.width="100%"}
+library(ggplot2)
+plot + scale_fill_gradient(low="yellow", high="darkblue")
+```
+

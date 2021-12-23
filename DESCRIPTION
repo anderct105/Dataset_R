@@ -1,0 +1,26 @@
+Package: dataset
+Type: Package
+Title: Package to Handle Permutations
+Version: 0.0.1
+Author: Ander Cejudo [aut]
+Maintainer: Ander Cejudo <acejudo001@ehu.eus>
+imports:
+  ggplot2,
+  reshap2,
+  reshape2
+Suggests: 
+  ggplot2,
+  reshape2,
+  rmarkdown,
+  knitr
+collate:
+  Attribute.R
+  Dataset.R
+Description: This package includes some basic functions to work with permutations
+License: GPL (>= 2)
+Encoding: UTF-8
+BuildVignettes: TRUE
+VignetteBuilder: 
+  knitr, 
+  rmarkdown
+RoxygenNote: 7.1.1

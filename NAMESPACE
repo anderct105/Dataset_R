@@ -1,0 +1,23 @@
+import('ggplot2', 'reshape2')
+exportClasses(Attribute, Dataset)
+exportMethods( 
+  normalizeMatrix,
+  estandarizeMatrix,
+  discretizeEW,
+  discretizeEF,
+  entropy,
+  variance,
+  colVar,
+  colEntropy,
+  discretizeMatrix,
+  estandarize,
+  normalize,
+  correlationPlot,
+  normalizedEntropyPlot)
+export(
+  attribute,
+  dataset,
+  readCSV,
+  createLog,
+  writeLog,
+  roc)
