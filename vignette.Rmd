@@ -1,0 +1,117 @@
+---
+title: "Dataset Vignette"
+author: "Ander Cejudo"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Ejemplo de miniviñeta}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+En esta viñeta se muestran las funcionalidades implementadas con una base de datos creada como ejemplo, probando primero con 2 atributos sueltos y luego con una base de datos creada a partir de esos dos atributos.
+
+# Atributos
+
+En este primer apartado vamos a usar los objetos atributos y algunas de sus funcionalidades, con las que trabajaremos luego con el objeto Dataset. Lo primero, creamos un atributo numérico y otro nominal para ver las diferentes opciones
+```{r}
+library(devtools)
+install_github("hadley/dplyr")
+library(dataset)
+
+a1 <- attribute(c(1,2,3,2,1,2,3,3,2,1,1))
+a1
+a2 <- attribute(c("dog", "dog", "cat", "wolve", "cat", "dog", "dog", "dog", "cat", "wolve", "dog"))
+a2
+```
+Una vez creado el atributo, vamos a probar algunas funcionalidades.
+```{r}
+# Este método trata los datos como si fuesen categóricos
+entropy(a1)
+entropy(a2)
+
+# Normalizar y estandarizar
+a11 <- normalize(a1)
+a11
+a12 <- estandarize(a1)
+a12
+```
+En este caso hemos visto la entropía de ambos atributos y los hemos normalizado y estandarizado. También podemos calcular la varianza y discretizarlos.
+```{r}
+variance(a1)
+
+# Discretizar con dos métodos
+a21 <- discretizeEF(a1, num.bins=3)
+a21
+a22 <- discretizeEW(a1, num.bins=3)
+a22
+
+```
+# Dataset
+
+Ahora, vamos a pasar a trabajar con el objeto Dataset. Reutilizamos los atributos a1 y a2 y les añadimos una clase, como si de clasificación supervisada se tratase.
+```{r}
+clase <- attribute(c("a", "a", "b", "a", "b", "a", "b", "c","a","b", "a"))
+d <- dataset(c(a1, a2), clase)
+# Podemos ver toda la información acerca de la base de datos con cada uno de sus atributos
+d
+```
+Ahora, vamos a aplicar varias operaciones sobre esa base de datos.
+```{r}
+colVar(d)
+colEntropy(d)
+```
+Vemos que hemos calculado la varianza y la entropía por cada columna. Para la varianza, no se puede calcular la varianza de una variable categórica, pero en el caso de la entropía, la variable numérica la trata como categórica. Ahora, vamos a discretizar, normalizar y estandarizar el dataset como antes.
+```{r}
+estandarizeMatrix(d)
+```
+Vemos que solo se ha modificado el atributo numérico.
+
+```{r}
+normalizeMatrix(d)
+```
+```{r}
+discretizeMatrix(d, method="EF")
+```
+Vemos que en este caso, solo ha discretizado la columna numérica. También podemos sacar dos gráficas.
+```{r}
+normalizedEntropyPlot(d)
+```
+
+```{r}
+# Añadimos otro atributo numérico para que se pueda ver algo en la siguiente gráfica
+c3 <- attribute(c(1,2,3,3,2,2,3,2,2,1,1))
+d@columns <- c(d@columns, c3)
+correlationPlot(d)
+```
+
+Como resultado del último plot, podemos ver un heatmap de correlación entre variables.
+
+## Funciones extras
+
+También se proveen algunas funciones extras para trabajar con logs o dibujar la curva roc. Para la curva roc, primero crearemos un dataframe en el que la primera columna será la probabilidad y la segunda la clase real.
+```{r}
+df <- data.frame("PROBS"=c(0.6,0.8,0.1,0.7,0.5,0.4,0.6,0.6,0.9,1), "CLASE"=c(TRUE,TRUE,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE,TRUE,FALSE))
+roc(df)
+
+```
+
+Y por último, leer un csv y algunas funciones de log.
+```{r}
+head(readCSV("/home/ander/Descargas/iris.csv"))
+
+```
+```{r}
+# Creamos archivo miLog.log
+createLog("miLog.log")
+writeLog("miLog.log","Nuevo mensaje")
+# Vemos que efectivamente sea escrito en el
+read.delim("miLog.log", "\n", header = FALSE)
+```
+
