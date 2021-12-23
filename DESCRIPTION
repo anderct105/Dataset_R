@@ -6,7 +6,6 @@ Author: Ander Cejudo [aut]
 Maintainer: Ander Cejudo <acejudo001@ehu.eus>
 imports:
   ggplot2,
-  reshap2,
   reshape2
 Suggests: 
   ggplot2,
